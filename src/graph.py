@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 AGENT_CONFIG: dict[str, dict] = {
     "triage": {"prompt": TRIAGE_SYSTEM_PROMPT, "tools": TRIAGE_TOOLS},
     "credit": {"prompt": CREDIT_SYSTEM_PROMPT, "tools": CREDIT_TOOLS},
-    "interview": {"prompt": CREDIT_INTERVIEW_SYSTEM_PROMPT, "tools": CREDIT_INTERVIEW_TOOLS},
+    "credit_interview": {"prompt": CREDIT_INTERVIEW_SYSTEM_PROMPT, "tools": CREDIT_INTERVIEW_TOOLS},
     "exchange": {"prompt": EXCHANGE_SYSTEM_PROMPT, "tools": EXCHANGE_TOOLS},
 }
 
@@ -27,7 +27,7 @@ TOOL_MAP: dict[str, object] = {tool.name: tool for tool in ALL_TOOLS}
 TRANSFER_MAP: dict[str, str] = {
     "redirect_credit": "credit",
     "redirect_exchange": "exchange",
-    "redirect_credit_interview": "interview",
+    "redirect_credit_interview": "credit_interview",
     "redirect_triage": "triage",
 }
 
@@ -70,8 +70,8 @@ def triage_node(state: AgentState) -> dict:
 def credit_node(state: AgentState) -> dict:
     return _agent_node(state, "credit")
 
-def interview_node(state: AgentState) -> dict:
-    return _agent_node(state, "interview")
+def credit_interview_node(state: AgentState) -> dict:
+    return _agent_node(state, "credit_interview")
 
 def exchange_node(state: AgentState) -> dict:
     return _agent_node(state, "exchange")
@@ -180,11 +180,11 @@ def route_after_tools(state: AgentState) -> str:
 
 def build_graph() -> StateGraph:
     builder = StateGraph(AgentState)
-    agent_names = ["triage", "credit", "interview", "exchange"]
+    agent_names = ["triage", "credit", "credit_interview", "exchange"]
     agent_map = {n: n for n in agent_names}
     builder.add_node("triage", triage_node)
     builder.add_node("credit", credit_node)
-    builder.add_node("interview", interview_node)
+    builder.add_node("credit_interview", credit_interview_node)
     builder.add_node("exchange", exchange_node)
     builder.add_node("tools", tool_node)
     builder.add_conditional_edges(START, route_entry, agent_map)
