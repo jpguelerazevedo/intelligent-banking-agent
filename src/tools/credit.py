@@ -71,11 +71,13 @@ def solicitar_aumento_limite(cpf: str, novo_limite: float) -> dict:
 		"status_pedido": status
 	}
 	file_exists = os.path.isfile(SOLICITACOES_CSV)
-	with open(SOLICITACOES_CSV, "a", encoding="utf-8", newline="") as f:
+	# Garante quebra de linha correta ao adicionar nova linha
+	with open(SOLICITACOES_CSV, "a", encoding="utf-8", newline="\n") as f:
 		writer = csv.DictWriter(f, fieldnames=list(registro.keys()))
 		if not file_exists:
 			writer.writeheader()
 		writer.writerow(registro)
+		f.write("\n")  # Garante uma linha em branco ao final do arquivo
 
 	return {
 		"cpf": cpf,
