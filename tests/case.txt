@@ -1,0 +1,31 @@
+score = ( 
+  (renda_mensal / (despesas + 1)) * peso_renda + 
+  peso_emprego[tipo_emprego] +  peso_dependentes[num_dependentes] + 
+  peso_dividas[tem_dividas] 
+)
+
+cliente teste:
+	João Paulo:
+		cpf: 12345678901
+		data_nascimento: 10/12/2002 
+		limite_credito = 1000
+		score: 300
+
+cases:
+	aumento de limite_credito = 2000
+		deve: aceitar
+	aumento de limite_credito = 6000
+		deve: recusar
+			redirecionamento credit_interview:
+			score atualizado
+	aumento de limite_credito = 6000
+		deve: aceitar
+				
+respostas da credit_interview:
+    score 550 e limite de 6000:
+        respostas:
+        renda_mensal: R$ 5.000
+        tipo_emprego: "formal"
+        despesas: R$ 2.999
+        num_dependentes: 0
+        tem_dividas: "não"
