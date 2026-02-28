@@ -12,7 +12,7 @@ CLIENTS_CSV = os.path.join(DATA_DIR, "clientes.csv")
 PESO_RENDA = 30
 PESO_EMPREGO = {
     "formal": 300,
-    "autônomo": 200,
+    "autônomo": 200,  # Aceitar variação sem acento
     "desempregado": 0,
 }
 PESO_DEPENDENTES = {

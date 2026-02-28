@@ -39,9 +39,11 @@ def triage_and_authenticate(cpf: str, birth_date: str, assunto: str) -> str:
 				row_birth = row["data_nascimento"].strip()
 				if row_cpf == cpf_clean and row_birth == birth_clean:
 					return (
-						f"SUCESSO: Cliente autenticado. Nome: {row['nome']}, "
-						f"CPF: {cpf_clean}, Assunto: {assunto}, "
-						f"Limite de crédito: R$ {row['limite_credito']}, Score: {row['score']}"
+						f"SUCESSO: Cliente autenticado. "
+						f"Nome: {row['nome']}. "
+						f"CPF: {cpf_clean}. Assunto: {assunto}. "
+						f"Limite de crédito: R$ {float(row['limite_credito'])}. "
+						f"Score: {float(row['score'])}."
 					)
 	except FileNotFoundError:
 		logger.error("Arquivo %s não encontrado.", CLIENTS_CSV)

@@ -8,19 +8,19 @@ def end_chat() -> str:
 @tool
 def redirect_triage() -> str:
 	"""Transfere o atendimento para o agente de triagem."""
-	return "Você será redirecionado para o agente de triagem para dar continuidade ao seu atendimento."
+	return "TRANSFERÊNCIA: Cliente encaminhado para a triagem."
 
 @tool
 def redirect_credit() -> str:
 	"""Transfere o atendimento para o agente de crédito."""
-	return "Você será redirecionado para o agente de crédito para tratar de assuntos relacionados a limite e solicitações de crédito."
+	return "TRANSFERÊNCIA: Cliente encaminhado para o serviço de crédito."
 
 @tool
 def redirect_credit_interview() -> str:
 	"""Transfere o atendimento para o agente de entrevista de crédito."""
-	return "Você será redirecionado para o agente de entrevista de crédito para uma análise mais detalhada do seu perfil."
+	return "TRANSFERÊNCIA: Cliente encaminhado para a entrevista de crédito."
 
 @tool
 def redirect_exchange() -> str:
 	"""Transfere o atendimento para o agente de câmbio."""
-	return "Você será redirecionado para o agente de câmbio para consultar cotações de moedas."
+	return "TRANSFERÊNCIA: Cliente encaminhado para o serviço de câmbio."

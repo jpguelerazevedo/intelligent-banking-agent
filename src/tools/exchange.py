@@ -1,7 +1,7 @@
 import requests
 from langchain_core.tools import tool
 
-API_URL = "https://api.exchangerate.host/latest"
+API_URL = "https://api.frankfurter.dev/v1/latest"
 
 CURRENCY_NAMES: dict[str, str] = {
     "USD": "Dólar Americano",
@@ -24,13 +24,14 @@ def get_exchange(currency_code: str) -> dict:
     try:
         response = requests.get(API_URL, params={"base": code, "symbols": "BRL"}, timeout=10)
         data = response.json()
+        # Frankfurter retorna 'rates' e 'date' também
         if "rates" in data and "BRL" in data["rates"]:
             return {
                 "moeda": code,
                 "nome": CURRENCY_NAMES[code],
                 "cotacao_brl": data["rates"]["BRL"],
                 "data_cotacao": data.get("date"),
-                "fonte": "exchangerate.host"
+                "fonte": "frankfurter.dev"
             }
         else:
             return {"erro": "Não foi possível obter a cotação no momento."}

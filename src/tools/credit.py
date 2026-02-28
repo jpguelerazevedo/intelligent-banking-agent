@@ -61,6 +61,24 @@ def solicitar_aumento_limite(cpf: str, novo_limite: float) -> dict:
 				break
 	status = "aprovado" if aprovado else "rejeitado"
 
+	# Se aprovado, atualizar o limite no clientes.csv
+	if status == "aprovado":
+		# Ler todos os clientes
+		with open(CLIENTS_CSV, "r", encoding="utf-8") as f:
+			reader = csv.DictReader(f)
+			clientes = list(reader)
+			fieldnames = reader.fieldnames
+		# Atualizar o limite do cliente
+		for row in clientes:
+			if row["cpf"].strip() == cpf.strip():
+				row["limite_credito"] = str(novo_limite)
+				break
+		# Salvar de volta
+		with open(CLIENTS_CSV, "w", encoding="utf-8", newline="") as f:
+			writer = csv.DictWriter(f, fieldnames=fieldnames)
+			writer.writeheader()
+			writer.writerows(clientes)
+
 	# Registrar solicitação
 	now = datetime.now().isoformat()
 	registro = {
@@ -71,13 +89,11 @@ def solicitar_aumento_limite(cpf: str, novo_limite: float) -> dict:
 		"status_pedido": status
 	}
 	file_exists = os.path.isfile(SOLICITACOES_CSV)
-	# Garante quebra de linha correta ao adicionar nova linha
 	with open(SOLICITACOES_CSV, "a", encoding="utf-8", newline="\n") as f:
 		writer = csv.DictWriter(f, fieldnames=list(registro.keys()))
 		if not file_exists:
 			writer.writeheader()
 		writer.writerow(registro)
-		f.write("\n")  # Garante uma linha em branco ao final do arquivo
 
 	return {
 		"cpf": cpf,
