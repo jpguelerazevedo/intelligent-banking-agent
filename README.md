@@ -68,7 +68,7 @@ Esse modelo garante que:
 - Todas as decisões e atualizações são rastreáveis e auditáveis.
 - O sistema é robusto contra inconsistências de estado e fácil de depurar.
 
-## Escolhas Técnicas e Justificativas
+## Stack
 
 - **Python**: Linguagem escolhida por sua ampla adoção em IA, facilidade de integração com bibliotecas de NLP, manipulação de dados e orquestração de fluxos conversacionais.
 - **LangGraph**: Escolhido para orquestração multi-agente devido à flexibilidade, suporte a grafos de estado e integração nativa com LLMs, permitindo transições dinâmicas e controle preciso do fluxo.
