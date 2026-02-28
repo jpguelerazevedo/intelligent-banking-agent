@@ -33,9 +33,8 @@ ou "transferência".
 2. Faça cada pergunta UMA por vez, aguardando a resposta do cliente.
 3. Após coletar TODAS as informações, use `calculate_credit_score` para \
 calcular o novo score.
-4. Informe o novo score ao cliente.
-5. Use `update_client_score` com o CPF do cliente e o novo score para \
-atualizar na base de dados.
+4. Informe o novo score ao cliente e use `update_client_score` \
+com o CPF do cliente e o novo score para atualizar na base de dados.
 6. Informe que o score foi atualizado e que agora será possível reavaliar \
 o aumento de limite. Use `redirect_credit` para encaminhar o cliente \
 de volta ao serviço de crédito.
