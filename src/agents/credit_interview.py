@@ -1,7 +1,6 @@
 """Configuração do agente de entrevista de crédito."""
 
 from langchain_core.messages import SystemMessage
-
 from src.tools.credit_interview import update_client_score, calculate_credit_score
 from src.tools.common import end_chat, redirect_credit
 
