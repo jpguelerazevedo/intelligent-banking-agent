@@ -80,7 +80,7 @@ Esse modelo garante que:
 
 ### Escolha do Modelo LLM
 
-Optou-se pelo uso do modelo **gpt5-mini** ao invés de modelos menores devido à necessidade de melhor compreensão e controle das transições entre agentes no fluxo multi-agente. Foram realizados testes com modelos menores, como o **gpt-4o-mini** e o **gpt-4.1-nano**, porém identificou-se um gargalo significativo no "entendimento" dessas transições, resultando em respostas inconsistentes e falhas no uso correto das ferramentas de transferência entre agentes. O **gpt5-mini** demonstrou desempenho superior nesse aspecto, garantindo maior robustez e aderência ao fluxo orquestrado, mesmo em cenários complexos de troca de contexto entre agentes.
+Optou-se pelo uso do modelo **gpt-5-mini** ao invés de modelos menores devido à necessidade de melhor compreensão e controle das transições entre agentes no fluxo multi-agente. Foram realizados testes com modelos menores, como o **gpt-4o-mini** e o **gpt-4.1-nano**, porém identificou-se um gargalo significativo no "entendimento" dessas transições, resultando em respostas inconsistentes e falhas no uso correto das ferramentas de transferência entre agentes. O **gpt-5-mini** demonstrou desempenho superior nesse aspecto, garantindo maior robustez e aderência ao fluxo orquestrado, mesmo em cenários complexos de troca de contexto entre agentes.
 
 ## Desafios Enfrentados e Soluções
 - **Obediência do LLM ao fluxo**: O maior desafio foi garantir que o LLM usasse sempre as ferramentas de transferência, sem improvisar respostas fora do escopo. Isso foi resolvido com prompts robustos, exemplos positivos/negativos e reforço de regras obrigatórias.
