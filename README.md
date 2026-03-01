@@ -76,6 +76,7 @@ Esse modelo garante que:
 - **LangGraph**: Escolhido para orquestração multi-agente devido à flexibilidade, suporte a grafos de estado e integração nativa com LLMs, permitindo transições dinâmicas e controle preciso do fluxo.
 - **LangChain + OpenAI**: Permite fácil binding de ferramentas, integração com modelos GPT, e controle do fluxo conversacional, além de facilitar logging e debugging.
 - **LangSmith**: Utilizado para rastreamento, análise e depuração de fluxos de conversação, facilitando a identificação de falhas, análise de decisões do LLM e melhoria contínua dos prompts.
+ - **Pytest**: Estrutura de testes usada para executar a suíte de testes unitários e e2e, facilitar TDD e integração contínua.
 - **Persistência em CSV**: Dados de clientes, limites e solicitações são armazenados em arquivos CSV para simplicidade, transparência e fácil inspeção manual durante o desenvolvimento e testes.
 - **API de Cotação Frankfurter**: Escolhida por ser gratuita, confiável e não exigir autenticação, permitindo obter cotações de moedas em tempo real sem custos ou limitações severas de uso.
 - **Separação por módulos**: Cada agente e conjunto de ferramentas reside em seu próprio módulo, facilitando manutenção, extensibilidade e testes isolados.
