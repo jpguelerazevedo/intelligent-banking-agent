@@ -157,6 +157,16 @@ Os testes unitários usam mocks; nada no banco de dados real é modificado duran
 
 ![Resultados dos testes](docs/testes.png)
 
+> Resultado dos testes unitários com pytest presentes em `tests/`.
+
+https://github.com/user-attachments/assets/cb08771f-44a5-482e-9e73-8f44643dad6e
+
+> Resultado do case e2e presente em `tests/`.
+> 
+> Obs: Tentei intercalar entre agentes no inicio para poder mostrar as funcionalidades de redirecionamento.
+
+
+
 
 
 
