@@ -153,7 +153,7 @@ PYTHONPATH=. python3 -m pytest tests/unit/
 
 Os testes unitários usam mocks; nada no banco de dados real é modificado durante a execução.
 
-### Resultados dos testes
+### Resultados dos testes (salvo em `docs/`)
 
 ![Resultados dos testes](docs/testes.png)
 
@@ -161,8 +161,7 @@ Os testes unitários usam mocks; nada no banco de dados real é modificado duran
 
 https://github.com/user-attachments/assets/cb08771f-44a5-482e-9e73-8f44643dad6e
 
-> Resultado do case e2e presente em `tests/`.
-> 
+> Resultado do case e2e presente em `tests/`.<br>
 > Obs: Tentei intercalar entre agentes no inicio para poder mostrar as funcionalidades de redirecionamento.
 
 
