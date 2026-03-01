@@ -20,10 +20,12 @@ O Intelligent Banking Agent é um ecossistema de atendimento ao cliente para um 
 │   │   ├── credit_interview.py
 │   │   ├── exchange.py
 │   │   └── common.py
+│   ├── utils/             # Utilitários compartilhados (ex: db_utils.py)
 │   ├── config.py          # Configuração do LLM e paths
 │   ├── graph.py           # Orquestração do grafo multi-agente
 │   └── state.py           # Definição do estado compartilhado
 ├── data/                  # Arquivos CSV de clientes, limites, solicitações
+├── tests/                 # Testes automatizados: unit/ (mocks) e e2e/ (casos manuais)
 ├── docs/                  # Documentação e fluxogramas
 └── requirements.txt       # Dependências do projeto
 ```
@@ -88,7 +90,7 @@ Optou-se pelo uso do modelo **gpt-5-mini** ao invés de modelos menores devido �
 - **Separação de responsabilidades**: Cada agente foi projetado com escopo restrito e ferramentas específicas, evitando sobreposição de funções.
 - **Testes de fluxo**: Foram realizados testes manuais e ajustes iterativos nos prompts e no grafo para garantir transições suaves e automáticas.
 
-## Tutorial de Execução e Testes
+## Tutorial de Execução
 1. Clone o repositório e instale as dependências:
 	```bash
 	git clone <repo-url>
@@ -99,12 +101,63 @@ Optou-se pelo uso do modelo **gpt-5-mini** ao invés de modelos menores devido �
 	```
 2. Configure as variáveis de ambiente em `.env` (veja `.env.exemple`).
 3. Execute o sistema:
-	```bash
-	python3 main.py
-	```
-4. Siga as instruções no terminal para interagir com o assistente.
 
-### Testes
-- Teste fluxos de autenticação, crédito, câmbio e entrevista.
-- Simule pedidos fora do escopo para verificar se a transferência automática ocorre.
-- Verifique os arquivos CSV para persistência dos dados.
+- Para interação via terminal/CLI (modo texto):
+```bash
+python3 main.py
+```
+
+- Para interface web (frontend) via Streamlit:
+```bash
+streamlit run app.py
+```
+
+4. Siga as instruções na interface escolhida para interagir com o assistente.
+
+## Testes
+O diretório `tests/` contém a suíte criada para validar o comportamento das ferramentas e agentes sem alterar a base de dados real. A estrutura usada é:
+
+- `tests/unit/`: testes automatizados e isolados (com *mocks*).
+- `tests/e2e/`: casos de teste de ponta a ponta e roteiros manuais (`case.txt`).
+
+### Objetivo dos testes
+- **Unit (Tools):** Executar cada *tool* de forma isolada, simulando entradas e interceptando acessos a CSV/API com `unittest.mock` para garantir correções e regras de negócio (validações, cálculos, formatos).
+- **Unit (Agents):** Validar a configuração estática dos agentes — se as ferramentas corretas estão registradas e se os *System Prompts* seguem as regras definidas (estatísticas/estruturais), evitando regressões de configuração.
+- **E2E (manual):** Roteiros de teste humano para validar fluxos completos na interface (Streamlit/CLI) seguindo `tests/e2e/case.txt`.
+
+### Como os testes isolam o acesso aos dados
+Foi utilizado `@patch` para interceptar funções da camada de acesso (`src.utils.db_utils`), por exemplo `get_client_by_cpf` e `update_client_field`. Assim simulamos retornos esperados sem ler/gravar os arquivos em `data/` durante os testes.
+
+### Convenção para arquivos de teste
+Para evitar colisões de nomes entre testes de diferentes camadas, adote a convenção de prefixar os módulos de teste com o escopo. Exemplos:
+
+- `tests/unit/tools/test_tools_<nome>.py`
+- `tests/unit/agents/test_agents_<nome>.py`
+
+Isso previne conflitos de importação quando existirem testes com o mesmo nome lógico em pastas diferentes.
+
+### Como rodar os testes
+1. Ative sua venv:
+```bash
+source .venv/bin/activate
+```
+2. (Opcional) Instale/atualize `pytest`:
+```bash
+pip install pytest
+```
+3. Execute os testes unitários:
+```bash
+PYTHONPATH=. python3 -m pytest tests/unit/
+```
+
+Os testes unitários usam mocks; nada no banco de dados real é modificado durante a execução.
+
+### Resultados dos testes
+
+![Resultados dos testes](docs/testes.png)
+
+
+
+
+
+

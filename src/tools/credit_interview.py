@@ -1,25 +1,24 @@
 """Ferramentas de entrevista financeira para recálculo e update de score de crédito."""
-import csv
 import logging
-import os
 from langchain_core.tools import tool
-from src.config import DATA_DIR
+from src.utils.db_utils import update_client_field
 
 logger = logging.getLogger(__name__)
 
-CLIENTS_CSV = os.path.join(DATA_DIR, "clientes.csv")
-
 PESO_RENDA = 30
+
 PESO_EMPREGO = {
     "formal": 300,
     "autônomo": 200,  # Aceitar variação sem acento
     "desempregado": 0,
 }
+
 PESO_DEPENDENTES = {
     0: 100,
     1: 80,
     2: 60,
 }
+
 PESO_DEPENDENTES_3_MAIS = 30
 
 PESO_DIVIDAS = {
@@ -76,47 +75,10 @@ def update_client_score(cpf: str, new_score: int) -> str:
     """Atualiza o score de crédito de um cliente em clientes.csv.
     Retorna confirmação com scores anterior e novo, ou mensagem de erro.
     """
-    cpf_clean = cpf.replace(".", "").replace("-", "").replace(" ", "")
-    try:
-        with open(CLIENTS_CSV, "r", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            fieldnames = reader.fieldnames
-            rows = list(reader)
-    except FileNotFoundError:
-        logger.error("Arquivo %s não encontrado.", CLIENTS_CSV)
+    old_score = update_client_field(cpf, "score", new_score)
+    if old_score is not None:
         return (
-            "ERRO_SISTEMA: Não foi possível acessar a base de dados. "
-            "Por favor, tente novamente mais tarde."
+            f"ATUALIZADO: Score do cliente atualizado de {old_score} para "
+            f"{new_score}."
         )
-    except Exception as e:
-        logger.error("Erro ao ler %s: %s", CLIENTS_CSV, e)
-        return (
-            "ERRO_SISTEMA: Ocorreu um erro inesperado ao acessar os dados. "
-            "Por favor, tente novamente mais tarde."
-        )
-    found = False
-    old_score = None
-    for row in rows:
-        row_cpf = row["cpf"].strip().replace(".", "").replace("-", "")
-        if row_cpf == cpf_clean:
-            old_score = row["score"]
-            row["score"] = str(new_score)
-            found = True
-            break
-    if not found:
-        return "ERRO: Cliente não encontrado na base de dados."
-    try:
-        with open(CLIENTS_CSV, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(rows)
-    except Exception as e:
-        logger.error("Erro ao salvar %s: %s", CLIENTS_CSV, e)
-        return (
-            "ERRO_SISTEMA: Não foi possível salvar a atualização do score. "
-            "Por favor, tente novamente mais tarde."
-        )
-    return (
-        f"ATUALIZADO: Score do cliente atualizado de {old_score} para "
-        f"{new_score}."
-    )
+    return "ERRO: Cliente não encontrado na base de dados ou ocorreu um erro."

@@ -1,45 +1,37 @@
-import csv
-import os
-from datetime import datetime
+import logging
 from langchain_core.tools import tool
-from src.config import DATA_DIR
+from src.utils.db_utils import (
+	get_client_by_cpf,
+	is_limit_approved,
+	update_client_field,
+	register_limit_request
+)
 
-CLIENTS_CSV = os.path.join(DATA_DIR, "clientes.csv")
-SCORE_LIMIT_CSV = os.path.join(DATA_DIR, "score_limit.csv")
-SOLICITACOES_CSV = os.path.join(DATA_DIR, "solicitacoes_aumento_limite.csv")
+logger = logging.getLogger(__name__)
 
 @tool
 def consultar_limite(cpf: str) -> dict:
 	"""Consulta o limite de crédito disponível para o cliente."""
-	with open(CLIENTS_CSV, "r", encoding="utf-8") as f:
-		reader = csv.DictReader(f)
-		for row in reader:
-			if row["cpf"].strip() == cpf.strip():
-				return {
-					"cpf": cpf,
-					"nome": row["nome"],
-					"limite_credito": float(row["limite_credito"]),
-					"score": int(row["score"])
-				}
+	cliente = get_client_by_cpf(cpf)
+	if cliente:
+		return {
+			"cpf": cpf,
+			"nome": cliente["nome"],
+			"limite_credito": float(cliente["limite_credito"]),
+			"score": int(cliente["score"])
+		}
 	return {"erro": "Cliente não encontrado."}
 
 @tool
 def solicitar_aumento_limite(cpf: str, novo_limite: float) -> dict:
 	"""Solicita aumento de limite de crédito, registra o pedido e retorna o status.
 	Bloqueia solicitações se o novo limite for igual ou inferior ao limite atual."""
-	cliente = None
-	with open(CLIENTS_CSV, "r", encoding="utf-8") as f:
-		reader = csv.DictReader(f)
-		for row in reader:
-			if row["cpf"].strip() == cpf.strip():
-				cliente = row
-				break
+	cliente = get_client_by_cpf(cpf)
 	if not cliente:
 		return {"erro": "Cliente não encontrado."}
 
 	limite_atual = float(cliente["limite_credito"])
 	score = int(cliente["score"])
-	status = "pendente"
 
 	# Bloquear solicitação se já está no limite máximo ou novo limite não é maior
 	if novo_limite <= limite_atual:
@@ -50,50 +42,15 @@ def solicitar_aumento_limite(cpf: str, novo_limite: float) -> dict:
 		}
 
 	# Checar score para aprovação
-	aprovado = False
-	with open(SCORE_LIMIT_CSV, "r", encoding="utf-8") as f:
-		reader = csv.DictReader(f)
-		for row in reader:
-			if int(row["score_minimo"]) <= score <= int(row["score_maximo"]):
-				max_limit = float(row["max_limit"])
-				if novo_limite <= max_limit:
-					aprovado = True
-				break
+	aprovado = is_limit_approved(score, novo_limite)
 	status = "aprovado" if aprovado else "rejeitado"
 
-	# Se aprovado, atualizar o limite no clientes.csv
+	# Se aprovado, atualizar o limite
 	if status == "aprovado":
-		# Ler todos os clientes
-		with open(CLIENTS_CSV, "r", encoding="utf-8") as f:
-			reader = csv.DictReader(f)
-			clientes = list(reader)
-			fieldnames = reader.fieldnames
-		# Atualizar o limite do cliente
-		for row in clientes:
-			if row["cpf"].strip() == cpf.strip():
-				row["limite_credito"] = str(novo_limite)
-				break
-		# Salvar de volta
-		with open(CLIENTS_CSV, "w", encoding="utf-8", newline="") as f:
-			writer = csv.DictWriter(f, fieldnames=fieldnames)
-			writer.writeheader()
-			writer.writerows(clientes)
+		update_client_field(cpf, "limite_credito", novo_limite)
 
 	# Registrar solicitação
-	now = datetime.now().isoformat()
-	registro = {
-		"cpf_cliente": cpf,
-		"data_hora_solicitacao": now,
-		"limite_atual": limite_atual,
-		"novo_limite_solicitado": novo_limite,
-		"status_pedido": status
-	}
-	file_exists = os.path.isfile(SOLICITACOES_CSV)
-	with open(SOLICITACOES_CSV, "a", encoding="utf-8", newline="\n") as f:
-		writer = csv.DictWriter(f, fieldnames=list(registro.keys()))
-		if not file_exists:
-			writer.writeheader()
-		writer.writerow(registro)
+	register_limit_request(cpf, limite_atual, novo_limite, status)
 
 	return {
 		"cpf": cpf,

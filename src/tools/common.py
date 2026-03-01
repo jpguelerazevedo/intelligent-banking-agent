@@ -1,3 +1,5 @@
+"""Ferramentas comuns para todos os agentes."""
+
 from langchain_core.tools import tool
 
 @tool
