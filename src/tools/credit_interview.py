@@ -9,7 +9,8 @@ PESO_RENDA = 30
 
 PESO_EMPREGO = {
     "formal": 300,
-    "autônomo": 200,  # Aceitar variação sem acento
+    "autônomo": 200,
+    "autonomo": 200, # para lidar com acentos e nao precisar de outro input
     "desempregado": 0,
 }
 
@@ -24,6 +25,7 @@ PESO_DEPENDENTES_3_MAIS = 30
 PESO_DIVIDAS = {
     "sim": -100,
     "não": 100,
+    "nao": 100, # para lidar com acentos e nao precisar de outro input
 }
 
 @tool
